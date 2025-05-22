@@ -1,12 +1,12 @@
 -- definitions/marts/cleaned_indices.sqlx
 
-{% set indices = ["DJI", "SP500", "Nasdaq"] %}
-
 config {
   type: "operations",
   schema: "bq_data_finance_prod",
   dependencies: []
 }
+
+{% set indices = ["DJI", "SP500", "Nasdaq"] %}
 
 {% for index_name in indices %}
   -- Création dynamique d'une vue pour l'indice {{ index_name }}
