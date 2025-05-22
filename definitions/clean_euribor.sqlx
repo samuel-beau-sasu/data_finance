@@ -29,5 +29,13 @@ FROM `financial-data-storage.bq_data_finance_prod.euribor_ester_raw`
 order by Date desc
 )
 
-SELECT * from euribor_ester_sans_doublons
+SELECT 
+    Date,
+    `1 jour`,
+    `1 semaine`,
+    `1 mois`,
+    `3 mois`,
+    `6 mois`,
+    `12 mois` 
+from euribor_ester_sans_doublons
 where rn = 1
