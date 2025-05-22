@@ -1,37 +1,14 @@
--- definitions/marts/cleaned_indices.sqlx
+-- definitions/marts/test_minimal.sqlx
 
-config {
-  type: "operations",
-  schema: "bq_data_finance_prod",
-  dependencies: []
+js {
+  const test_var = ["test1", "test2"];
+  
+  // Option 1: Créer une seule vue avec UNION ALL
+  publish("test_minimal", {
+    type: "view",
+    schema: "bq_data_finance_prod",
+    description: "Test minimal avec valeurs multiples"
+  }).query(ctx => `
+    ${test_var.map(item => `SELECT '${item}' AS value`).join('\nUNION ALL\n')}
+  `);
 }
-
-{% set indices = ["DJI", "SP500", "Nasdaq"] %}
-
-{% for index_name in indices %}
-  -- Création dynamique d'une vue pour l'indice {{ index_name }}
-  CREATE OR REPLACE VIEW `bq_data_finance_prod.{{ index_name | lower }}_cleaned_data` AS
-  WITH Indice_sans_doublons AS (
-    SELECT
-      Date,
-      Ouverture,
-      Haut,
-      Bas,
-      Cloture,
-      Volume,
-      ROW_NUMBER() OVER(PARTITION BY Date ORDER BY timestamp DESC) AS rn
-    FROM
-      `financial-data-storage.bq_data_finance_prod.{{ index_name }}-raw`
-  )
-  SELECT
-    Date,
-    Ouverture,
-    Haut,
-    Bas,
-    Cloture,
-    Volume
-  FROM
-    Indice_sans_doublons
-  WHERE
-    rn = 1;
-{% endfor %}
