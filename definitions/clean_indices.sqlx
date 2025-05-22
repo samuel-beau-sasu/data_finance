@@ -9,9 +9,10 @@ config {
 js {
   const test_var = ["test1", "test2"];
   const projectId = "financial-data-storage"; // Remplacez par votre vrai project ID
+  const databaseId = "bq_data_finance";
 }
 
 ${test_var.map(item => `
-CREATE OR REPLACE VIEW \`${projectId}.bq_data_finance_prod.test_${item}\` AS (
+CREATE OR REPLACE VIEW \`${projectId}.${databaseId}.test_${item}\` AS (
   SELECT '${item}' AS value
 );`).join('\n')}
