@@ -1,14 +1,17 @@
 -- definitions/marts/test_minimal.sqlx
 
+config {
+  type: "operations",
+  schema: "bq_data_finance_prod",
+  description: "Test minimal avec opérations multiples"
+}
+
 js {
   const test_var = ["test1", "test2"];
-  
-  // Option 1: Créer une seule vue avec UNION ALL
-  publish("test_minimal", {
-    type: "view",
-    schema: "bq_data_finance_prod",
-    description: "Test minimal avec valeurs multiples"
-  }).query(ctx => `
-    ${test_var.map(item => `SELECT '${item}' AS value`).join('\nUNION ALL\n')}
-  `);
+  const projectId = "financial-data-storage"; // Remplacez par votre vrai project ID
 }
+
+${test_var.map(item => `
+CREATE OR REPLACE VIEW \`${projectId}.bq_data_finance_prod.test_${item}\` AS (
+  SELECT '${item}' AS value
+);`).join('\n')}
